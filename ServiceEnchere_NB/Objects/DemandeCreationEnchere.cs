@@ -5,32 +5,32 @@ using System.Web;
 
 namespace ServiceEnchere_NB.Objects
 {
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://BiztalkEnchereSchemas.DemandeCreationEnchere")]
-    [System.Xml.Serialization.XmlRoot(Namespace = "http://EAI.DemandeCreationEnchere", IsNullable = false)]
+    [System.Xml.Serialization.XmlType(Namespace = "http://BiztalkEnchereSchemas.DemandeCreationEnchere")]
+    //[System.Xml.Serialization.XmlRoot(Namespace = "DemandeCreationEnchere", IsNullable = false)]
     public class DemandeCreationEnchere
     {
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public string NomEnchere { get; set; }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public decimal PrixMinimum { get; set; }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public string OptionTransport { get; set; }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public int Duree { get; set; }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public string TypeEnchere { get; set; }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public string Categorie { get; set; }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public string MotsCles { get; set; }
 
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlElement()]
         public string AutresInformations { get; set; }
     }
 }

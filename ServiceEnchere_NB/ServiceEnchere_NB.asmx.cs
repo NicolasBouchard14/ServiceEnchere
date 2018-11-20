@@ -23,67 +23,105 @@ namespace ServiceEnchere_NB
     {
 
         [WebMethod]
-        public bool SauvegarderDemandeCreationEnchere(DemandeCreationEnchere demandeCreationEnchere)
+        public int? SauvegarderDemandeCreationEnchere(DemandeCreationEnchere pDemandeCreationEnchere)
         {
+            int? idEnchere = null;
             try
             {
                 using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
                 {
                     // insert a request
-                    string aCommand = "INSERT INTO " + 
-                        "dbo.DemandeCreationEnchere(IdEnchere, NomEnchere, PrixMinimum, OptionTransport, Duree, TypeEnchere, Categorie, MotsCles, AutresInformations)" +
-                        "VALUES(@IdEnchere, @NomEnchere, @PrixMinimum, @OptionTransport, @Duree, @TypeEnchere, @Categorie, @MotsCles, @AutresInformations)";
+                    string aCommand = "INSERT INTO " +
+                        "dbo.DemandeCreationEnchere(NomEnchere, PrixMinimum, OptionTransport, Duree, TypeEnchere, Categorie, MotsCles, AutresInformations)" +
+                        "VALUES(@NomEnchere, @PrixMinimum, @OptionTransport, @Duree, @TypeEnchere, @Categorie, @MotsCles, @AutresInformations)" +
+                        "SELECT SCOPE_IDENTITY();";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
-                    SqlParameter[] sp = new SqlParameter[9];
+                    SqlParameter[] sp = new SqlParameter[8];
 
-                    sp[0] = new SqlParameter("@IdEnchere", SqlDbType.UniqueIdentifier);
-                    sp[0].Value = new Guid();
+                    sp[0] = new SqlParameter("@NomEnchere", SqlDbType.VarChar, 100);
+                    sp[0].Value = pDemandeCreationEnchere.NomEnchere;
 
-                    sp[1] = new SqlParameter("@NomEnchere", SqlDbType.VarChar, 100);
-                    sp[1].Value = demandeCreationEnchere.NomEnchere;
+                    sp[1] = new SqlParameter("@PrixMinimum", SqlDbType.Decimal);
+                    sp[1].Precision = 18; sp[2].Scale = 2;
+                    sp[1].Value = pDemandeCreationEnchere.PrixMinimum;
 
-                    sp[2] = new SqlParameter("@PrixMinimum", SqlDbType.Decimal);
-                    sp[2].Precision = 18; sp[2].Scale = 2;
-                    sp[2].Value = demandeCreationEnchere.PrixMinimum;
+                    sp[2] = new SqlParameter("@OptionTransport", SqlDbType.VarChar, 100);
+                    sp[2].Value = pDemandeCreationEnchere.OptionTransport;
 
-                    sp[3] = new SqlParameter("@OptionTransport", SqlDbType.VarChar, 100);
-                    sp[3].Value = demandeCreationEnchere.OptionTransport;
+                    sp[3] = new SqlParameter("@Duree", SqlDbType.Int);
+                    sp[3].Value = pDemandeCreationEnchere.Duree;
 
-                    sp[4] = new SqlParameter("@Duree", SqlDbType.Int);
-                    sp[4].Value = demandeCreationEnchere.Duree;
+                    sp[4] = new SqlParameter("@TypeEnchere", SqlDbType.VarChar, 100);
+                    sp[4].Value = pDemandeCreationEnchere.TypeEnchere;
 
-                    sp[5] = new SqlParameter("@TypeEnchere", SqlDbType.VarChar, 100);
-                    sp[5].Value = demandeCreationEnchere.TypeEnchere;
+                    sp[5] = new SqlParameter("@Categorie", SqlDbType.VarChar, 100);
+                    sp[5].Value = pDemandeCreationEnchere.Categorie;
 
-                    sp[6] = new SqlParameter("@Categorie", SqlDbType.VarChar, 100);
-                    sp[6].Value = demandeCreationEnchere.Categorie;
+                    sp[6] = new SqlParameter("@MotsCles", SqlDbType.VarChar, 250);
+                    sp[6].Value = pDemandeCreationEnchere.MotsCles;
 
-                    sp[7] = new SqlParameter("@MotsCles", SqlDbType.VarChar, 250);
-                    sp[7].Value = demandeCreationEnchere.MotsCles;
-
-                    sp[8] = new SqlParameter("@AutresInformations", SqlDbType.VarChar, 250);
-                    sp[8].Value = demandeCreationEnchere.AutresInformations;
+                    sp[7] = new SqlParameter("@AutresInformations", SqlDbType.VarChar, 250);
+                    sp[7].Value = pDemandeCreationEnchere.AutresInformations;
 
                     insertComm.Parameters.AddRange(sp);
                     if (sqlConn.State == ConnectionState.Closed)
                     {
                         sqlConn.Open();
                     }
-                    insertComm.ExecuteNonQuery();
+
+                    idEnchere = (int)insertComm.ExecuteScalar();
+                    idEnchere = (idEnchere <= 0) ? null : idEnchere;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            return idEnchere;
+        }
+
+        [WebMethod]
+        public bool SauvegarderEncherissement(Encherissement pEncherissement)
+        {
+            bool result = false;
+            try
+            {
+                using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
+                {
+                    // insert a request
+                    string aCommand = "INSERT INTO " +
+                        "dbo.Encherissement(IdUtilisateur, IdEnchere, OffreMaximale)" +
+                        "VALUES(@IdUtilisateur, @IdEnchere, @OffreMaximale)" +
+                        "SELECT SCOPE_IDENTITY();";
+                    SqlCommand insertComm = new SqlCommand(aCommand);
+                    insertComm.Connection = sqlConn;
+                    SqlParameter[] sp = new SqlParameter[3];
+
+                    sp[0] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
+                    sp[0].Value = pEncherissement.IdUtilisateur;
+
+                    sp[1] = new SqlParameter("@IdEnchere", SqlDbType.Int);
+                    sp[1].Value = pEncherissement.IdUtilisateur;
+
+                    sp[2] = new SqlParameter("@OffreMaximale", SqlDbType.Int);
+                    sp[2].Value = pEncherissement.IdUtilisateur;
+
+                    insertComm.Parameters.AddRange(sp);
+                    if (sqlConn.State == ConnectionState.Closed)
+                    {
+                        sqlConn.Open();
+                    }
+
+                    result = (insertComm.ExecuteNonQuery() == 1);
                 }
             }
             catch (Exception ex)
             {
                 return false;
             }
-            return true;
-        }
 
-        [WebMethod]
-        public string SauvegarderEncherissement()
-        {
-            return "Hello World";
+            return result;
         }
 
         [WebMethod]
