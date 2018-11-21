@@ -6,7 +6,7 @@ using System.Web;
 namespace ServiceEnchere_NB.Objects
 {
     [System.Xml.Serialization.XmlType(Namespace = "http://BiztalkEnchereSchemas.DemandeCreationEnchere")]
-    [System.Xml.Serialization.XmlRoot("DemandeCreationEnchere", IsNullable = false)]
+    [System.Xml.Serialization.XmlRoot(Namespace = "http://BiztalkEnchere.DemandeCreationEnchere", IsNullable = false)]
     public class DemandeCreationEnchere
     {
         [System.Xml.Serialization.XmlElement()]

@@ -26,7 +26,7 @@ namespace ServiceEnchere_NB
         [WebMethod]
         public int SauvegarderDemandeCreationEnchere(DemandeCreationEnchere pDemandeCreationEnchere)
         {
-            int idEnchere;
+            int idEnchere = 0;
             try
             {
                 using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
@@ -40,8 +40,8 @@ namespace ServiceEnchere_NB
                     insertComm.Connection = sqlConn;
                     SqlParameter[] sp = new SqlParameter[9];
 
-                    sp[1] = new SqlParameter("@IdUtilisateur_Vendeur", SqlDbType.Int);
-                    sp[1].Value = pDemandeCreationEnchere.NomEnchere;
+                    sp[0] = new SqlParameter("@IdUtilisateur_Vendeur", SqlDbType.Int);
+                    sp[0].Value = pDemandeCreationEnchere.IdUtilisateur_Vendeur;
 
                     sp[1] = new SqlParameter("@NomEnchere", SqlDbType.VarChar, 100);
                     sp[1].Value = pDemandeCreationEnchere.NomEnchere;
@@ -95,21 +95,21 @@ namespace ServiceEnchere_NB
                 {
                     // insert a request
                     string aCommand = "INSERT INTO " +
-                        "dbo.Encherissement(IdUtilisateur, IdEnchere, OffreMaximale)" +
-                        "VALUES(@IdUtilisateur, @IdEnchere, @OffreMaximale)" +
+                        "dbo.Encherissement(IdUtilisateur_Encherisseur, IdEnchere, OffreMaximale)" +
+                        "VALUES(@IdUtilisateur_Encherisseur, @IdEnchere, @OffreMaximale)" +
                         "SELECT SCOPE_IDENTITY();";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
                     SqlParameter[] sp = new SqlParameter[3];
 
-                    sp[0] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
-                    sp[0].Value = pEncherissement.IdUtilisateur;
+                    sp[0] = new SqlParameter("@IdUtilisateur_Encherisseur", SqlDbType.Int);
+                    sp[0].Value = pEncherissement.IdUtilisateur_Encherisseur;
 
                     sp[1] = new SqlParameter("@IdEnchere", SqlDbType.Int);
-                    sp[1].Value = pEncherissement.IdUtilisateur;
+                    sp[1].Value = pEncherissement.IdEnchere;
 
                     sp[2] = new SqlParameter("@OffreMaximale", SqlDbType.Int);
-                    sp[2].Value = pEncherissement.IdUtilisateur;
+                    sp[2].Value = pEncherissement.OffreMaximale;
 
                     insertComm.Parameters.AddRange(sp);
                     if (sqlConn.State == ConnectionState.Closed)
@@ -141,12 +141,6 @@ namespace ServiceEnchere_NB
         }
 
         [WebMethod]
-        public string InformerVendeurNouveauResultat()
-        {
-            return "Hello World";
-        }
-
-        [WebMethod]
         public string SauvegarderEvaluation()
         {
             return "Hello World";
@@ -167,6 +161,7 @@ namespace ServiceEnchere_NB
         #endregion
 
         #region Recuperer
+        [WebMethod]
         public Encherissement RecupererEncherissementGagnant(int idEnchere)
         {
             Encherissement encherissementGagnant = null;
