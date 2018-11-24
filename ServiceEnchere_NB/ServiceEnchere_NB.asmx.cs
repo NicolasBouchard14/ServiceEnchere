@@ -24,9 +24,9 @@ namespace ServiceEnchere_NB
         #region Sauvegarder
 
         [WebMethod]
-        public int SauvegarderDemandeCreationEnchere(DemandeCreationEnchere pDemandeCreationEnchere)
+        public BO_Enchere SauvegarderDemandeCreationEnchere(BO_DemandeCreationEnchere pDemandeCreationEnchere)
         {
-            int idEnchere = 0;
+            BO_Enchere enchere = new BO_Enchere();
             try
             {
                 using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
@@ -74,19 +74,20 @@ namespace ServiceEnchere_NB
                         sqlConn.Open();
                     }
 
-                    idEnchere = (int)insertComm.ExecuteScalar();
-                    idEnchere = (idEnchere <= 0) ? 0 : idEnchere;
+                    enchere.IdEnchere = Convert.ToInt32(insertComm.ExecuteScalar());
+                    enchere.IdEnchere = (enchere.IdEnchere <= 0) ? 0 : enchere.IdEnchere;
+                    enchere.DemandeCreationEnchere = pDemandeCreationEnchere;
                 }
             }
             catch (Exception ex)
             {
-                return 0;
+                return enchere;
             }
-            return idEnchere;
+            return enchere;
         }
 
         [WebMethod]
-        public bool SauvegarderEncherissement(Encherissement pEncherissement)
+        public bool SauvegarderEncherissement(BO_Encherissement pEncherissement)
         {
             bool result = false;
             try
@@ -95,8 +96,8 @@ namespace ServiceEnchere_NB
                 {
                     // insert a request
                     string aCommand = "INSERT INTO " +
-                        "dbo.Encherissement(IdUtilisateur_Encherisseur, IdEnchere, OffreMaximale)" +
-                        "VALUES(@IdUtilisateur_Encherisseur, @IdEnchere, @OffreMaximale)" +
+                        "dbo.Encherissement(IdUtilisateur_Encherisseur, IdEnchere, OffreMaximale) " +
+                        "VALUES(@IdUtilisateur_Encherisseur, @IdEnchere, @OffreMaximale) " +
                         "SELECT SCOPE_IDENTITY();";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
@@ -129,15 +130,81 @@ namespace ServiceEnchere_NB
         }
 
         [WebMethod]
-        public string BannirEncherisseurGagnant()
+        public bool BannirEncherisseurGagnant(int pIdUtilisateur_EncherisseurGagnant)
         {
-            return "Hello World";
+            bool result = false;
+            try
+            {
+                using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
+                {
+                    // insert a request
+                    string aCommand = "UPDATE dbo.Utilisateur " +
+                        "SET Banni = @Banni " +
+                        "WHERE IdUtilisateur = @IdUtilisateur ";
+                    SqlCommand insertComm = new SqlCommand(aCommand);
+                    insertComm.Connection = sqlConn;
+                    SqlParameter[] sp = new SqlParameter[2];
+
+                    sp[0] = new SqlParameter("@Banni", SqlDbType.Bit);
+                    sp[0].Value = true;
+
+                    sp[1] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
+                    sp[1].Value = pIdUtilisateur_EncherisseurGagnant;
+
+                    insertComm.Parameters.AddRange(sp);
+                    if (sqlConn.State == ConnectionState.Closed)
+                    {
+                        sqlConn.Open();
+                    }
+
+                    result = (insertComm.ExecuteNonQuery() == 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return result;
         }
 
         [WebMethod]
-        public string SauvegarderInfosPaiement()
+        public bool SauvegarderInfosPaiement(BO_Paiement pPaiement)
         {
-            return "Hello World";
+            bool result = false;
+            try
+            {
+                using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
+                {
+                    // insert a request
+                    string aCommand = "INSERT INTO " +
+                        "dbo.Paiement(IdEnchere, InfosPaiement)" +
+                        "VALUES(@IdEnchere, @InfosPaiement)";
+                    SqlCommand insertComm = new SqlCommand(aCommand);
+                    insertComm.Connection = sqlConn;
+                    SqlParameter[] sp = new SqlParameter[2];
+
+                    sp[0] = new SqlParameter("@IdEnchere", SqlDbType.Int);
+                    sp[0].Value = pPaiement.IdEnchere;
+
+                    sp[1] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
+                    sp[1].Value = pPaiement.InfosPaiement;
+
+                    insertComm.Parameters.AddRange(sp);
+                    if (sqlConn.State == ConnectionState.Closed)
+                    {
+                        sqlConn.Open();
+                    }
+
+                    result = (insertComm.ExecuteNonQuery() == 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return result;
         }
 
         [WebMethod]
@@ -162,25 +229,29 @@ namespace ServiceEnchere_NB
 
         #region Recuperer
         [WebMethod]
-        public Encherissement RecupererEncherissementGagnant(int idEnchere)
+        public BO_EncherissementGagnant RecupererEncherissementGagnant(int idEnchere)
         {
-            Encherissement encherissementGagnant = null;
+            BO_EncherissementGagnant encherissementGagnant = new BO_EncherissementGagnant();
             try
             {
                 using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
                 {
                     // insert a request
                     string aCommand = "SELECT * " +
-                        "FROM dbo.Encherissment as e " +
+                        "FROM dbo.Encherissement as e " +
                         "JOIN dbo.DemandeCreationEnchere as dce on dce.IdEnchere = e.IdEnchere " +
                         "JOIN dbo.Utilisateur as u on e.IdUtilisateur_Encherisseur = e.IdEnchere " +
-                        "WHERE e.Id = @IdEnchere";
+                        "WHERE e.IdEnchere = @IdEnchere " +
+                        "AND u.banni = @Banni";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
-                    SqlParameter[] sp = new SqlParameter[1];
+                    SqlParameter[] sp = new SqlParameter[2];
 
                     sp[0] = new SqlParameter("@IdEnchere", SqlDbType.Int);
                     sp[0].Value = idEnchere;
+
+                    sp[1] = new SqlParameter("@Banni", SqlDbType.Bit);
+                    sp[1].Value = false;
 
                     insertComm.Parameters.AddRange(sp);
                     if (sqlConn.State == ConnectionState.Closed)
@@ -189,20 +260,33 @@ namespace ServiceEnchere_NB
                     }
 
                     SqlDataReader reader =  insertComm.ExecuteReader();
-                    if(reader.Read())
+                    if (reader.Read())
                     {
-                        encherissementGagnant = new Encherissement()
+
+                        encherissementGagnant.Encherissement = new BO_Encherissement()
                         {
                             IdEnchere = reader.GetInt32(0),
                             IdUtilisateur_Encherisseur = reader.GetInt32(1),
                             OffreMaximale = reader.GetDecimal(2)
+                        };
+                        encherissementGagnant.Utilisateur_Vendeur = new BO_Utilisateur()
+                        {
+                            IdUtilisateur = reader.GetInt32(3),
+                            NomUtilisateur = reader.GetString(4),
+                            Courriel = reader.GetString(5)
+                        };
+                        encherissementGagnant.Utilisateur_EncherisseurGagnant = new BO_Utilisateur()
+                        {
+                            IdUtilisateur = reader.GetInt32(6),
+                            NomUtilisateur = reader.GetString(7),
+                            Courriel = reader.GetString(8)
                         };
                     }
                 }
             }
             catch (Exception ex)
             {
-                return null;
+                return encherissementGagnant;
             }
             return encherissementGagnant;
         }
