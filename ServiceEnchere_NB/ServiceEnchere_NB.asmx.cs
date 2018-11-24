@@ -229,13 +229,13 @@ namespace ServiceEnchere_NB
                     sp[1] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
                     sp[1].Value = pEvaluation.IdUtilisateur;
 
-                    sp[2] = new SqlParameter("@EvaluationGlobale", SqlDbType.Int);
+                    sp[2] = new SqlParameter("@EvaluationGlobale", SqlDbType.Bit);
                     sp[2].Value = pEvaluation.EvaluationGlobale;
 
-                    sp[3] = new SqlParameter("@Message", SqlDbType.Int);
+                    sp[3] = new SqlParameter("@Message", SqlDbType.VarChar, 250);
                     sp[3].Value = pEvaluation.Message;
 
-                    sp[4] = new SqlParameter("@FonctionnementProduit", SqlDbType.Int);
+                    sp[4] = new SqlParameter("@FonctionnementProduit", SqlDbType.VarChar, 250);
                     sp[4].Value = pEvaluation.FonctionnementProduit;
 
 
@@ -257,15 +257,42 @@ namespace ServiceEnchere_NB
         }
 
         [WebMethod]
-        public string AffecterEvaluationAgent()
+        public bool BannirVendeur(int pIdUtilisateur_Vendeur)
         {
-            return "Hello World";
-        }
+            bool result = false;
+            try
+            {
+                using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
+                {
+                    // insert a request
+                    string aCommand = "UPDATE dbo.Utilisateur " +
+                        "SET Banni = @Banni " +
+                        "WHERE IdUtilisateur = @IdUtilisateur ";
+                    SqlCommand insertComm = new SqlCommand(aCommand);
+                    insertComm.Connection = sqlConn;
+                    SqlParameter[] sp = new SqlParameter[2];
 
-        [WebMethod]
-        public string BannirVendeur()
-        {
-            return "Hello World";
+                    sp[0] = new SqlParameter("@Banni", SqlDbType.Bit);
+                    sp[0].Value = true;
+
+                    sp[1] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
+                    sp[1].Value = pIdUtilisateur_Vendeur;
+
+                    insertComm.Parameters.AddRange(sp);
+                    if (sqlConn.State == ConnectionState.Closed)
+                    {
+                        sqlConn.Open();
+                    }
+
+                    result = (insertComm.ExecuteNonQuery() == 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return result;
         }
 
         #endregion

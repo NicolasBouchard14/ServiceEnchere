@@ -11,7 +11,7 @@ namespace ServiceEnchere_NB.Objects
 
         public int IdUtilisateur { get; set; }
 
-        public string EvaluationGlobale { get; set; }
+        public bool EvaluationGlobale { get; set; }
 
         public string Message { get; set; }
 
