@@ -84,6 +84,7 @@
     <Compile Include="Objects\BO_DemandeCreationEnchere.cs" />
     <Compile Include="Objects\BO_Enchere.cs" />
     <Compile Include="Objects\BO_Encherissement.cs" />
+    <Compile Include="Objects\BO_Evaluation.cs" />
     <Compile Include="Objects\BO_Paiement.cs" />
     <Compile Include="Objects\BO_Utilisateur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

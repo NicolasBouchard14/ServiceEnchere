@@ -178,7 +178,7 @@ namespace ServiceEnchere_NB
                 {
                     // insert a request
                     string aCommand = "INSERT INTO " +
-                        "dbo.Paiement(IdEnchere, InfosPaiement)" +
+                        "dbo.InfosPaiement(IdEnchere, InfosPaiement)" +
                         "VALUES(@IdEnchere, @InfosPaiement)";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
@@ -208,9 +208,52 @@ namespace ServiceEnchere_NB
         }
 
         [WebMethod]
-        public string SauvegarderEvaluation()
+        public bool SauvegarderEvaluation(BO_Evaluation pEvaluation)
         {
-            return "Hello World";
+            bool result = false;
+            try
+            {
+                using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
+                {
+                    // insert a request
+                    string aCommand = "INSERT INTO " +
+                        "dbo.Evaluation(IdEnchere, IdUtilisateur, EvaluationGlobale, Message, FonctionnementProduit) " +
+                        "VALUES(@IdEnchere, @IdUtilisateur, @EvaluationGlobale, @Message, @FonctionnementProduit)";
+                    SqlCommand insertComm = new SqlCommand(aCommand);
+                    insertComm.Connection = sqlConn;
+                    SqlParameter[] sp = new SqlParameter[5];
+
+                    sp[0] = new SqlParameter("@IdEnchere", SqlDbType.Int);
+                    sp[0].Value = pEvaluation.IdEnchere;
+
+                    sp[1] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
+                    sp[1].Value = pEvaluation.IdUtilisateur;
+
+                    sp[2] = new SqlParameter("@EvaluationGlobale", SqlDbType.Int);
+                    sp[2].Value = pEvaluation.EvaluationGlobale;
+
+                    sp[3] = new SqlParameter("@Message", SqlDbType.Int);
+                    sp[3].Value = pEvaluation.Message;
+
+                    sp[4] = new SqlParameter("@FonctionnementProduit", SqlDbType.Int);
+                    sp[4].Value = pEvaluation.FonctionnementProduit;
+
+
+                    insertComm.Parameters.AddRange(sp);
+                    if (sqlConn.State == ConnectionState.Closed)
+                    {
+                        sqlConn.Open();
+                    }
+
+                    result = (insertComm.ExecuteNonQuery() == 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return result;
         }
 
         [WebMethod]
