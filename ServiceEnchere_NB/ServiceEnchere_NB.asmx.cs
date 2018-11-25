@@ -334,7 +334,6 @@ namespace ServiceEnchere_NB
                     SqlDataReader reader =  insertComm.ExecuteReader();
                     if (reader.Read())
                     {
-
                         encherissementGagnant.Encherissement = new BO_Encherissement()
                         {
                             IdEnchere = reader.GetInt32(0),

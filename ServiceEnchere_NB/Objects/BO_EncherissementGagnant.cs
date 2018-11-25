@@ -7,6 +7,11 @@ namespace ServiceEnchere_NB.Objects
 {
     public class BO_EncherissementGagnant
     {
+        public BO_EncherissementGagnant()
+        {
+            Encherissement = new BO_Encherissement();
+        }
+
         public BO_Encherissement Encherissement { get; set; }
 
         public BO_Utilisateur Utilisateur_Vendeur { get; set; }
