@@ -10,6 +10,7 @@ namespace ServiceEnchere_NB.Objects
         public BO_Enchere()
         {
             IdEnchere = 0;
+            DemandeCreationEnchere = new BO_DemandeCreationEnchere();
         }
 
         public int IdEnchere { get; set; }
