@@ -187,7 +187,7 @@ namespace ServiceEnchere_NB
                     sp[0] = new SqlParameter("@IdEnchere", SqlDbType.Int);
                     sp[0].Value = pPaiement.IdEnchere;
 
-                    sp[1] = new SqlParameter("@IdUtilisateur", SqlDbType.Int);
+                    sp[1] = new SqlParameter("@InfosPaiement", SqlDbType.VarChar);
                     sp[1].Value = pPaiement.InfosPaiement;
 
                     insertComm.Parameters.AddRange(sp);
@@ -217,7 +217,7 @@ namespace ServiceEnchere_NB
                 {
                     // insert a request
                     string aCommand = "INSERT INTO " +
-                        "dbo.Evaluation(IdEnchere, IdUtilisateur, EvaluationGlobale, Message, FonctionnementProduit) " +
+                        "dbo.EvaluationTransaction(IdEnchere, IdUtilisateur, EvaluationGlobale, Message, FonctionnementProduit) " +
                         "VALUES(@IdEnchere, @IdUtilisateur, @EvaluationGlobale, @Message, @FonctionnementProduit)";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
@@ -307,12 +307,14 @@ namespace ServiceEnchere_NB
                 using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
                 {
                     // insert a request
-                    string aCommand = "SELECT * " +
+                    string aCommand = "SELECT TOP 1 dce.IdEnchere, ue.IdUtilisateur, e.OffreMaximale, uv.IdUtilisateur, uv.NomUtilisateur, uv.Courriel, ue.IdUtilisateur, ue.NomUtilisateur, ue.Courriel " +
                         "FROM dbo.Encherissement as e " +
                         "JOIN dbo.DemandeCreationEnchere as dce on dce.IdEnchere = e.IdEnchere " +
-                        "JOIN dbo.Utilisateur as u on e.IdUtilisateur_Encherisseur = e.IdEnchere " +
+                        "JOIN dbo.Utilisateur as ue on e.IdUtilisateur_Encherisseur = ue.IdUtilisateur " +
+                        "JOIN dbo.Utilisateur as uv on dce.IdUtilisateur_Vendeur = uv.IdUtilisateur " +
                         "WHERE e.IdEnchere = @IdEnchere " +
-                        "AND u.banni = @Banni";
+                        "AND ue.banni = @Banni " +
+                        "ORDER BY e.OffreMaximale desc";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
                     SqlParameter[] sp = new SqlParameter[2];
