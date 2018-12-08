@@ -1,12 +1,8 @@
-﻿using ServiceEnchere_NB.Objects;
+﻿using GestionEnchereClassLibrary.Model;
 using ServiceEnchere_NB.Utils;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Services;
 
 namespace ServiceEnchere_NB
@@ -140,7 +136,7 @@ namespace ServiceEnchere_NB
                     // insert a request
                     string aCommand = "UPDATE dbo.Utilisateur " +
                         "SET Banni = @Banni " +
-                        "WHERE IdUtilisateur = @IdUtilisateur ";
+                        "WHERE ID = @IdUtilisateur ";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
                     SqlParameter[] sp = new SqlParameter[2];
@@ -267,7 +263,7 @@ namespace ServiceEnchere_NB
                     // insert a request
                     string aCommand = "UPDATE dbo.Utilisateur " +
                         "SET Banni = @Banni " +
-                        "WHERE IdUtilisateur = @IdUtilisateur ";
+                        "WHERE ID = @IdUtilisateur ";
                     SqlCommand insertComm = new SqlCommand(aCommand);
                     insertComm.Connection = sqlConn;
                     SqlParameter[] sp = new SqlParameter[2];
@@ -307,9 +303,9 @@ namespace ServiceEnchere_NB
                 using (SqlConnection sqlConn = DBUtil.GetGestionEnchereDBConnection())
                 {
                     // insert a request
-                    string aCommand = "SELECT TOP 1 dce.IdEnchere, ue.IdUtilisateur, e.OffreMaximale, uv.IdUtilisateur, uv.NomUtilisateur, uv.Courriel, ue.IdUtilisateur, ue.NomUtilisateur, ue.Courriel " +
+                    string aCommand = "SELECT TOP 1 dce.ID, ue.ID, e.OffreMaximale, uv.ID, uv.NomUtilisateur, uv.Courriel, ue.ID, ue.NomUtilisateur, ue.Courriel " +
                         "FROM dbo.Encherissement as e " +
-                        "JOIN dbo.DemandeCreationEnchere as dce on dce.IdEnchere = e.IdEnchere " +
+                        "JOIN dbo.DemandeCreationEnchere as dce on dce.ID = e.IdEnchere " +
                         "JOIN dbo.Utilisateur as ue on e.IdUtilisateur_Encherisseur = ue.IdUtilisateur " +
                         "JOIN dbo.Utilisateur as uv on dce.IdUtilisateur_Vendeur = uv.IdUtilisateur " +
                         "WHERE e.IdEnchere = @IdEnchere " +
