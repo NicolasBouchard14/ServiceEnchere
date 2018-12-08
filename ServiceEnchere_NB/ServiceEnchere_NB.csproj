@@ -80,13 +80,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\BO_EncherissementGagnant.cs" />
-    <Compile Include="Objects\BO_DemandeCreationEnchere.cs" />
-    <Compile Include="Objects\BO_Enchere.cs" />
-    <Compile Include="Objects\BO_Encherissement.cs" />
-    <Compile Include="Objects\BO_Evaluation.cs" />
-    <Compile Include="Objects\BO_Paiement.cs" />
-    <Compile Include="Objects\BO_Utilisateur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceEnchere_NB.asmx.cs">
       <DependentUpon>ServiceEnchere_NB.asmx</DependentUpon>
@@ -94,7 +87,12 @@
     </Compile>
     <Compile Include="Utils\DBUtil.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\GestionEnchereClassLibrary\GestionEnchereClassLibrary\GestionEnchereClassLibrary.csproj">
+      <Project>{2a46bd86-802f-4602-901b-ec9a13d8ead9}</Project>
+      <Name>GestionEnchereClassLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
