@@ -70,8 +70,8 @@ namespace ServiceEnchere_NB
                         sqlConn.Open();
                     }
 
-                    enchere.IdEnchere = Convert.ToInt32(insertComm.ExecuteScalar());
-                    enchere.IdEnchere = (enchere.IdEnchere <= 0) ? 0 : enchere.IdEnchere;
+                    enchere.ID = Convert.ToInt32(insertComm.ExecuteScalar());
+                    enchere.ID = (enchere.ID <= 0) ? 0 : enchere.ID;
                     enchere.DemandeCreationEnchere = pDemandeCreationEnchere;
                 }
             }
